@@ -7,6 +7,9 @@ import util.PatientSorter;
 import view.SearchPatientView;
 
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import java.awt.GridLayout;
 import java.awt.Frame;
 import java.util.ArrayList;
 
@@ -32,6 +35,8 @@ public class PatientController {
         view.getSearchButton().addActionListener(event -> handleSearch(view));
         view.getShowAllButton().addActionListener(event -> showAllPatients(view));
         view.getSortByNameButton().addActionListener(event -> showSortedPatients(view));
+        view.getUpdateButton().addActionListener(event -> handleUpdate(view));
+        view.getDeleteButton().addActionListener(event -> handleDelete(view));
         view.getCloseButton().addActionListener(event -> view.dispose());
         showAllPatients(view);
         view.setVisible(true);
@@ -107,6 +112,89 @@ public class PatientController {
         for (Patient patient : patients) {
             view.addResultRow(patient.getPatientID(), patient.getPatientName(), patient.getPhoneNumber());
         }
+    }
+
+    private void handleUpdate(SearchPatientView view) {
+        String patientID = view.getSelectedPatientID();
+        if (patientID == null) {
+            showError(view, "Select a patient row in the table first.");
+            return;
+        }
+
+        JTextField nameField = new JTextField(view.getSelectedPatientName());
+        JTextField phoneField = new JTextField(view.getSelectedPhoneNumber());
+
+        JPanel form = new JPanel(new GridLayout(2, 2, 8, 8));
+        form.add(new javax.swing.JLabel("Patient Name:"));
+        form.add(nameField);
+        form.add(new javax.swing.JLabel("Phone Number:"));
+        form.add(phoneField);
+
+        int choice = JOptionPane.showConfirmDialog(view, form,
+                "Update Patient " + patientID, JOptionPane.OK_CANCEL_OPTION);
+
+        if (choice != JOptionPane.OK_OPTION) {
+            return;
+        }
+
+        String newName = nameField.getText().trim();
+        String newPhone = phoneField.getText().trim();
+
+        if (newName.isEmpty() || newPhone.isEmpty()) {
+            showError(view, "Name and phone number are both required.");
+            return;
+        }
+        if (!newName.matches("[A-Za-z ]+")) {
+            showError(view, "Patient name must contain letters and spaces only.");
+            return;
+        }
+        if (!newPhone.matches("\\d{10}")) {
+            showError(view, "Phone number must be exactly 10 digits.");
+            return;
+        }
+
+        boolean updated = clinic.updatePatient(patientID, newName, newPhone);
+
+        if (!updated) {
+            showError(view, "Patient " + patientID + " could not be found.");
+            return;
+        }
+
+        JOptionPane.showMessageDialog(view,
+                "Patient " + patientID + " updated successfully.",
+                "Update Successful",
+                JOptionPane.INFORMATION_MESSAGE);
+        showAllPatients(view);
+    }
+
+    private void handleDelete(SearchPatientView view) {
+        String patientID = view.getSelectedPatientID();
+        if (patientID == null) {
+            showError(view, "Select a patient row in the table first.");
+            return;
+        }
+
+        int choice = JOptionPane.showConfirmDialog(view,
+                "Delete patient " + patientID + " (" + view.getSelectedPatientName() + ")?",
+                "Confirm Delete",
+                JOptionPane.YES_NO_OPTION);
+
+        if (choice != JOptionPane.YES_OPTION) {
+            return;
+        }
+
+        boolean deleted = clinic.deletePatient(patientID);
+
+        if (!deleted) {
+            showError(view, "Patient " + patientID + " could not be found.");
+            return;
+        }
+
+        JOptionPane.showMessageDialog(view,
+                "Patient " + patientID + " deleted. Remember to save.",
+                "Delete Successful",
+                JOptionPane.INFORMATION_MESSAGE);
+        showAllPatients(view);
     }
 
     private void showSortedPatients(SearchPatientView view) {

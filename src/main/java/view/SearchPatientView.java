@@ -19,6 +19,8 @@ public class SearchPatientView extends JDialog {
     private JButton searchButton;
     private JButton showAllButton;
     private JButton sortByNameButton;
+    private JButton updateButton;
+    private JButton deleteButton;
     private JButton closeButton;
     private JTable resultTable;
     private DefaultTableModel tableModel;
@@ -62,9 +64,14 @@ public class SearchPatientView extends JDialog {
         JScrollPane scrollPane = new JScrollPane(resultTable);
         scrollPane.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
 
+        updateButton = new JButton("Update Selected");
+        deleteButton = new JButton("Delete Selected");
         closeButton = new JButton("Close");
+
         JPanel bottomPanel = new JPanel();
         bottomPanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 10, 10));
+        bottomPanel.add(updateButton);
+        bottomPanel.add(deleteButton);
         bottomPanel.add(closeButton);
 
         add(topPanel, BorderLayout.NORTH);
@@ -88,8 +95,40 @@ public class SearchPatientView extends JDialog {
         return sortByNameButton;
     }
 
+    public JButton getUpdateButton() {
+        return updateButton;
+    }
+
+    public JButton getDeleteButton() {
+        return deleteButton;
+    }
+
     public JButton getCloseButton() {
         return closeButton;
+    }
+
+    public String getSelectedPatientID() {
+        int row = resultTable.getSelectedRow();
+        if (row < 0) {
+            return null;
+        }
+        return String.valueOf(tableModel.getValueAt(row, 0));
+    }
+
+    public String getSelectedPatientName() {
+        int row = resultTable.getSelectedRow();
+        if (row < 0) {
+            return null;
+        }
+        return String.valueOf(tableModel.getValueAt(row, 1));
+    }
+
+    public String getSelectedPhoneNumber() {
+        int row = resultTable.getSelectedRow();
+        if (row < 0) {
+            return null;
+        }
+        return String.valueOf(tableModel.getValueAt(row, 2));
     }
 
     public void clearResults() {
