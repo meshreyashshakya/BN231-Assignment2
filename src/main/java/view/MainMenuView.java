@@ -15,6 +15,7 @@ import java.awt.Font;
 public class MainMenuView extends JFrame {
 
     private JButton registerPatientButton;
+    private JButton registerDoctorButton;
     private JButton searchPatientButton;
     private JButton saveDataButton;
     private JButton loadDataButton;
@@ -22,7 +23,7 @@ public class MainMenuView extends JFrame {
 
     public MainMenuView() {
         setTitle("Community Health Clinic Management System");
-        setSize(460, 420);
+        setSize(460, 470);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -38,6 +39,7 @@ public class MainMenuView extends JFrame {
         headingPanel.add(subHeading, BorderLayout.SOUTH);
 
         registerPatientButton = createMenuButton("Register Patient");
+        registerDoctorButton = createMenuButton("Register Doctor");
         searchPatientButton = createMenuButton("Search Patient");
         saveDataButton = createMenuButton("Save Data to File");
         loadDataButton = createMenuButton("Load Data from File");
@@ -48,6 +50,8 @@ public class MainMenuView extends JFrame {
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(20, 60, 30, 60));
 
         buttonPanel.add(registerPatientButton);
+        buttonPanel.add(Box.createVerticalStrut(12));
+        buttonPanel.add(registerDoctorButton);
         buttonPanel.add(Box.createVerticalStrut(12));
         buttonPanel.add(searchPatientButton);
         buttonPanel.add(Box.createVerticalStrut(12));
@@ -71,6 +75,10 @@ public class MainMenuView extends JFrame {
 
     public JButton getRegisterPatientButton() {
         return registerPatientButton;
+    }
+
+    public JButton getRegisterDoctorButton() {
+        return registerDoctorButton;
     }
 
     public JButton getSearchPatientButton() {

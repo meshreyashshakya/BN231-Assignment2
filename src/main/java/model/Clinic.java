@@ -10,22 +10,28 @@ import java.util.ArrayList;
 
 public class Clinic {
 
-    private static final String DEFAULT_PATIENT_FILE = "data/patients.txt";
+    private static final String DEFAULT_DATA_FOLDER = "data";
 
     private ArrayList<Patient> patients;
-    private String patientFile;
+    private ArrayList<Doctor> doctors;
+    private String dataFolder;
 
     public Clinic() {
-        this(DEFAULT_PATIENT_FILE);
+        this(DEFAULT_DATA_FOLDER);
     }
 
-    public Clinic(String patientFile) {
+    public Clinic(String dataFolder) {
         this.patients = new ArrayList<>();
-        this.patientFile = patientFile;
+        this.doctors = new ArrayList<>();
+        this.dataFolder = dataFolder;
     }
 
     public ArrayList<Patient> getPatients() {
         return patients;
+    }
+
+    public ArrayList<Doctor> getDoctors() {
+        return doctors;
     }
 
     public boolean addPatient(Patient patient) {
@@ -71,12 +77,46 @@ public class Clinic {
         return true;
     }
 
+    public boolean addDoctor(Doctor doctor) {
+        if (doctor == null) {
+            return false;
+        }
+        if (findDoctorByID(doctor.getDoctorID()) != null) {
+            return false;
+        }
+        doctors.add(doctor);
+        return true;
+    }
+
+    public Doctor findDoctorByID(String doctorID) {
+        if (doctorID == null) {
+            return null;
+        }
+        for (int i = 0; i < doctors.size(); i++) {
+            Doctor current = doctors.get(i);
+            if (current.getDoctorID().equalsIgnoreCase(doctorID.trim())) {
+                return current;
+            }
+        }
+        return null;
+    }
+
+    public boolean deleteDoctor(String doctorID) {
+        Doctor doctor = findDoctorByID(doctorID);
+        if (doctor == null) {
+            return false;
+        }
+        doctors.remove(doctor);
+        return true;
+    }
+
     public void saveData() throws IOException {
-        File folder = new File(patientFile).getParentFile();
-        if (folder != null && !folder.exists()) {
+        File folder = new File(dataFolder);
+        if (!folder.exists()) {
             folder.mkdirs();
         }
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(patientFile))) {
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(patientFilePath()))) {
             for (Patient patient : patients) {
                 writer.write(patient.getPatientID() + ","
                         + patient.getPatientName() + ","
@@ -84,10 +124,24 @@ public class Clinic {
                 writer.newLine();
             }
         }
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(doctorFilePath()))) {
+            for (Doctor doctor : doctors) {
+                writer.write(doctor.getDoctorID() + ","
+                        + doctor.getDoctorName() + ","
+                        + doctor.getDoctorSpeciality());
+                writer.newLine();
+            }
+        }
     }
 
     public void loadData() throws IOException {
-        File file = new File(patientFile);
+        loadPatients();
+        loadDoctors();
+    }
+
+    private void loadPatients() throws IOException {
+        File file = new File(patientFilePath());
         if (!file.exists()) {
             return;
         }
@@ -104,5 +158,33 @@ public class Clinic {
                 }
             }
         }
+    }
+
+    private void loadDoctors() throws IOException {
+        File file = new File(doctorFilePath());
+        if (!file.exists()) {
+            return;
+        }
+        doctors.clear();
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.trim().isEmpty()) {
+                    continue;
+                }
+                String[] parts = line.split(",");
+                if (parts.length == 3) {
+                    doctors.add(new Doctor(parts[0], parts[1], parts[2]));
+                }
+            }
+        }
+    }
+
+    private String patientFilePath() {
+        return dataFolder + File.separator + "patients.txt";
+    }
+
+    private String doctorFilePath() {
+        return dataFolder + File.separator + "doctors.txt";
     }
 }

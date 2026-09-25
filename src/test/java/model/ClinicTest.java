@@ -23,7 +23,7 @@ class ClinicTest {
 
     @BeforeEach
     void setUp() {
-        clinic = new Clinic(tempDir.resolve("patients.txt").toString());
+        clinic = new Clinic(tempDir.toString());
     }
 
     @Test
@@ -99,7 +99,7 @@ class ClinicTest {
         clinic.addPatient(new Patient("P002", "Sarah Lee", "0423456789"));
         clinic.saveData();
 
-        Clinic reloaded = new Clinic(tempDir.resolve("patients.txt").toString());
+        Clinic reloaded = new Clinic(tempDir.toString());
         reloaded.loadData();
 
         assertEquals(2, reloaded.getPatients().size());
