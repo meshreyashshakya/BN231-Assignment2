@@ -3,6 +3,7 @@ package controller;
 import model.Clinic;
 import model.Patient;
 import view.RegisterPatientView;
+import util.PatientSorter;
 import view.SearchPatientView;
 
 import javax.swing.JOptionPane;
@@ -30,6 +31,7 @@ public class PatientController {
         SearchPatientView view = new SearchPatientView(parentFrame);
         view.getSearchButton().addActionListener(event -> handleSearch(view));
         view.getShowAllButton().addActionListener(event -> showAllPatients(view));
+        view.getSortByNameButton().addActionListener(event -> showSortedPatients(view));
         view.getCloseButton().addActionListener(event -> view.dispose());
         showAllPatients(view);
         view.setVisible(true);
@@ -103,6 +105,14 @@ public class PatientController {
         view.clearResults();
         ArrayList<Patient> patients = clinic.getPatients();
         for (Patient patient : patients) {
+            view.addResultRow(patient.getPatientID(), patient.getPatientName(), patient.getPhoneNumber());
+        }
+    }
+
+    private void showSortedPatients(SearchPatientView view) {
+        view.clearResults();
+        ArrayList<Patient> sorted = PatientSorter.sortByName(clinic.getPatients());
+        for (Patient patient : sorted) {
             view.addResultRow(patient.getPatientID(), patient.getPatientName(), patient.getPhoneNumber());
         }
     }

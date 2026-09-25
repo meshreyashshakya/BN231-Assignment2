@@ -18,13 +18,14 @@ public class SearchPatientView extends JDialog {
     private JTextField searchField;
     private JButton searchButton;
     private JButton showAllButton;
+    private JButton sortByNameButton;
     private JButton closeButton;
     private JTable resultTable;
     private DefaultTableModel tableModel;
 
     public SearchPatientView(Frame owner) {
         super(owner, "Search Patient", true);
-        setSize(560, 380);
+        setSize(660, 380);
         setLocationRelativeTo(owner);
 
         JLabel heading = new JLabel("Search Patient by ID", JLabel.CENTER);
@@ -34,6 +35,7 @@ public class SearchPatientView extends JDialog {
         searchField = new JTextField(15);
         searchButton = new JButton("Search");
         showAllButton = new JButton("Show All");
+        sortByNameButton = new JButton("Sort by Name");
 
         JPanel searchPanel = new JPanel();
         searchPanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
@@ -41,6 +43,7 @@ public class SearchPatientView extends JDialog {
         searchPanel.add(searchField);
         searchPanel.add(searchButton);
         searchPanel.add(showAllButton);
+        searchPanel.add(sortByNameButton);
 
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.add(heading, BorderLayout.NORTH);
@@ -79,6 +82,10 @@ public class SearchPatientView extends JDialog {
 
     public JButton getShowAllButton() {
         return showAllButton;
+    }
+
+    public JButton getSortByNameButton() {
+        return sortByNameButton;
     }
 
     public JButton getCloseButton() {
