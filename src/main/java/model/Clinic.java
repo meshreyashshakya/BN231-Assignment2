@@ -10,12 +10,18 @@ import java.util.ArrayList;
 
 public class Clinic {
 
-    private static final String PATIENT_FILE = "data/patients.txt";
+    private static final String DEFAULT_PATIENT_FILE = "data/patients.txt";
 
     private ArrayList<Patient> patients;
+    private String patientFile;
 
     public Clinic() {
-        patients = new ArrayList<>();
+        this(DEFAULT_PATIENT_FILE);
+    }
+
+    public Clinic(String patientFile) {
+        this.patients = new ArrayList<>();
+        this.patientFile = patientFile;
     }
 
     public ArrayList<Patient> getPatients() {
@@ -66,11 +72,11 @@ public class Clinic {
     }
 
     public void saveData() throws IOException {
-        File folder = new File("data");
-        if (!folder.exists()) {
+        File folder = new File(patientFile).getParentFile();
+        if (folder != null && !folder.exists()) {
             folder.mkdirs();
         }
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(PATIENT_FILE))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(patientFile))) {
             for (Patient patient : patients) {
                 writer.write(patient.getPatientID() + ","
                         + patient.getPatientName() + ","
@@ -81,7 +87,7 @@ public class Clinic {
     }
 
     public void loadData() throws IOException {
-        File file = new File(PATIENT_FILE);
+        File file = new File(patientFile);
         if (!file.exists()) {
             return;
         }
